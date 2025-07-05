@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Advanced Kurti Dev 010 Converter</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 30px; background-color: #f0f0f0; }
+    textarea { width: 45%; height: 150px; padding: 10px; margin: 10px; font-size: 18px; }
+    .output { font-family: 'Kurti Dev 010', Arial, sans-serif; }
+    button { padding: 10px 20px; font-size: 16px; margin: 10px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <h2>Advanced Hindi to Kurti Dev 010 Converter</h2>
+
+  <textarea id="unicodeInput" placeholder="Paste Unicode Hindi text here..."></textarea>
+  <textarea id="kurtiOutput" placeholder="Kurti Dev 010 formatted output will appear here..." readonly></textarea><br>
+
+  <button onclick="convert()">Convert</button>
+  <button onclick="copyOutput()">Copy Output</button>
+
+  <p><strong>Note:</strong> Paste Unicode Hindi (like from Google Translate). This tool rearranges matras for perfect Kurti Dev 010 output.</p>
+
+  <script>
+    function convert() {
+      const text = document.getElementById('unicodeInput').value.trim();
+      document.getElementById('kurtiOutput').value = unicodeToKurtiDevAdvanced(text);
+    }
+
+    function copyOutput() {
+      const output = document.getElementById('kurtiOutput');
+      output.select();
+      document.execCommand('copy');
+      alert('Kurti Dev text copied!');
+    }
+
+    function unicodeToKurtiDevAdvanced(text) {
+      const replacements = [
+        // Basic consonants and vowels
+        [/क़/g, ""], [/क/g, "d"], [/ख/g, "[k"], [/ग/g, "x"], [/घ/g, "?k"], [/च/g, "p"], [/छ/g, "N"], [/ज/g, "t"],
+        [/झ/g, "÷"], [/ञ/g, "="], [/ट/g, "V"], [/ठ/g, "B"], [/ड/g, "M"], [/ढ/g, "<"], [/ण/g, "."], [/त/g, "r"],
+        [/थ/g, "Fk"], [/द/g, "n"], [/ध/g, "/k"], [/न/g, "u"], [/प/g, "i"], [/फ/g, "Q"], [/ब/g, "c"], [/भ/g, "Hk"],
+        [/म/g, "e"], [/य/g, ";"], [/र/g, "j"], [/ल/g, "y"], [/व/g, "o"], [/श/g, "'k"], [/ष/g, '"k'], [/स/g, "l"],
+        [/ह/g, "g"],
+
+        // Swars
+        [/अ/g, "v"], [/आ/g, "vk"], [/इ/g, "b"], [/ई/g, "bZ"], [/उ/g, "m"], [/ऊ/g, "Å"], [/ए/g, ","], [/ऐ/g, "_"],
+        [/ओ/g, "vkS"], [/औ/g, "vks"], [/ऋ/g, "D"],
+
+        // Matras (need rearrangement)
+        [/ा/g, "k"], [/ि/g, "f"], [/ी/g, "h"], [/ु/g, "q"], [/ू/g, "w"], [/े/g, "s"], [/ै/g, "S"], [/ो/g, "ks"],
+        [/ौ/g, "ks"],
+
+        // Others
+        [/ं/g, "M+"], [/ः/g, ":"], [/ँ/g, "Z"], [/।/g, "."], [/०/g, "0"], [/१/g, "1"], [/२/g, "2"], [/३/g, "3"],
+        [/४/g, "4"], [/५/g, "5"], [/६/g, "6"], [/७/g, "7"], [/८/g, "8"], [/९/g, "9"],
+      ];
+
+      // Reordering 'ि' matra before consonants it follows
+      text = text.replace(/([क-ह]़?)(ि)/g, "f$1");
+
+      for (const [pattern, replacement] of replacements) {
+        text = text.replace(pattern, replacement);
+      }
+
+      return text;
+    }
+  </script>
+
+</body>
+</html>
