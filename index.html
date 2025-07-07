@@ -1,73 +1,127 @@
+<script>
+    // **Important Note:** For this converter to work correctly,
+    // the Kruti Dev 010 font must be installed on the user's system.
+    // If the font is not installed, the output will not appear correctly.
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Advanced Kurti Dev 010 Converter</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 30px; background-color: #f0f0f0; }
-    textarea { width: 45%; height: 150px; padding: 10px; margin: 10px; font-size: 18px; }
-    .output { font-family: 'Kurti Dev 010', Arial, sans-serif; }
-    button { padding: 10px 20px; font-size: 16px; margin: 10px; cursor: pointer; }
-  </style>
-</head>
-<body>
-
-  <h2>Advanced Hindi to Kurti Dev 010 Converter</h2>
-
-  <textarea id="unicodeInput" placeholder="Paste Unicode Hindi text here..."></textarea>
-  <textarea id="kurtiOutput" placeholder="Kurti Dev 010 formatted output will appear here..." readonly></textarea><br>
-
-  <button onclick="convert()">Convert</button>
-  <button onclick="copyOutput()">Copy Output</button>
-
-  <p><strong>Note:</strong> Paste Unicode Hindi (like from Google Translate). This tool rearranges matras for perfect Kurti Dev 010 output.</p>
-
-  <script>
     function convert() {
-      const text = document.getElementById('unicodeInput').value.trim();
-      document.getElementById('kurtiOutput').value = unicodeToKurtiDevAdvanced(text);
+        const text = document.getElementById('unicodeInput').value.trim();
+        document.getElementById('kurtiOutput').value = unicodeToKurtiDevAdvanced(text);
     }
 
     function copyOutput() {
-      const output = document.getElementById('kurtiOutput');
-      output.select();
-      document.execCommand('copy');
-      alert('Kurti Dev text copied!');
+        const output = document.getElementById('kurtiOutput');
+        output.select();
+        document.execCommand('copy');
+        alert('Kruti Dev text copied!');
     }
 
-    function unicodeToKurtiDevAdvanced(text) {
-      const replacements = [
-        // Basic consonants and vowels
-        [/क़/g, ""], [/क/g, "d"], [/ख/g, "[k"], [/ग/g, "x"], [/घ/g, "?k"], [/च/g, "p"], [/छ/g, "N"], [/ज/g, "t"],
-        [/झ/g, "÷"], [/ञ/g, "="], [/ट/g, "V"], [/ठ/g, "B"], [/ड/g, "M"], [/ढ/g, "<"], [/ण/g, "."], [/त/g, "r"],
-        [/थ/g, "Fk"], [/द/g, "n"], [/ध/g, "/k"], [/न/g, "u"], [/प/g, "i"], [/फ/g, "Q"], [/ब/g, "c"], [/भ/g, "Hk"],
-        [/म/g, "e"], [/य/g, ";"], [/र/g, "j"], [/ल/g, "y"], [/व/g, "o"], [/श/g, "'k"], [/ष/g, '"k'], [/स/g, "l"],
-        [/ह/g, "g"],
+    function unicodeToKurtiDevAdvanced(unicodeText) {
+        let krutiDevText = unicodeText;
 
-        // Swars
-        [/अ/g, "v"], [/आ/g, "vk"], [/इ/g, "b"], [/ई/g, "bZ"], [/उ/g, "m"], [/ऊ/g, "Å"], [/ए/g, ","], [/ऐ/g, "_"],
-        [/ओ/g, "vkS"], [/औ/g, "vks"], [/ऋ/g, "D"],
+        // --- Step 1: Pre-process Matras for Kruti Dev Ordering ---
+        // This is crucial. In Unicode, matras appear after consonants,
+        // but in Kruti Dev, some matras (like 'f' for 'i') appear before.
+        // We'll handle 'ि' (i) and 'ी' (ee) first as they need to go before the consonant in Kruti Dev.
+        // Other matras like 'ो', 'ौ', 'ु', 'ू', 'े', 'ै' will be mapped later with their consonant.
 
-        // Matras (need rearrangement)
-        [/ा/g, "k"], [/ि/g, "f"], [/ी/g, "h"], [/ु/g, "q"], [/ू/g, "w"], [/े/g, "s"], [/ै/g, "S"], [/ो/g, "ks"],
-        [/ौ/g, "ks"],
+        // Reorder 'ि' (chhoti i ki matra) - moves 'f' before the consonant
+        // Example: कि (U+0915 U+093F) -> fक (Kruti Dev: f d)
+        krutiDevText = krutiDevText.replace(/([क-ह])ि/g, 'f$1');
 
-        // Others
-        [/ं/g, "M+"], [/ः/g, ":"], [/ँ/g, "Z"], [/।/g, "."], [/०/g, "0"], [/१/g, "1"], [/२/g, "2"], [/३/g, "3"],
-        [/४/g, "4"], [/५/g, "5"], [/६/g, "6"], [/७/g, "7"], [/८/g, "8"], [/९/g, "9"],
-      ];
+        // Reorder 'ी' (badi ee ki matra) - moves 'h' before the consonant
+        // Example: की (U+0915 U+0940) -> hक (Kruti Dev: h d)
+        krutiDevText = krutiDevText.replace(/([क-ह])ी/g, 'h$1');
 
-      // Reordering 'ि' matra before consonants it follows
-      text = text.replace(/([क-ह]़?)(ि)/g, "f$1");
+        // --- Step 2: Handle Complex Conjuncts and Special Cases ---
+        // This is where specific Unicode character combinations are mapped to their Kruti Dev equivalents.
+        // This list needs to be as exhaustive as possible for accuracy.
 
-      for (const [pattern, replacement] of replacements) {
-        text = text.replace(pattern, replacement);
-      }
+        const complexConjuncts = [
+            // Half Letters and Conjuncts that behave specially
+            [/क़/g, ''], [/क्र/g, 'dz'], [/ट्र/g, 'Vª'], [/द्र/g, 'n~j'], [/प्र/g, 'iz'], [/व्र/g, 'oz'],
+            [/क्त/g, 'Dr'], [/त्र/g, '=k'], [/ज्ञ/g, 'K'], [/श्र/g, 'J'], [/द्य/g, '|q'], [/द्ध/g, 'ºk'],
+            [/ड्ड/g, 'M~M'], [/ट्ठ/g, 'B~B'], [/ह्य/g, 'g~;'], [/ह्म/g, 'g~e'], [/ह्न/g, 'g~u'],
+            [/ट्ट/g, 'V~V'], [/ल्ल/g, 'Yy'], [/म्ल/g, 'Eyk'], [/न्‍ह/g, 'Ug'], [/न्‍द/g, 'Un'],
+            [/रु/g, ':]'], [/रू/g, ':'], // Special r+u/ruu forms
 
-      return text;
+            // Reph (र्) - very important to handle before standard 'र'
+            // The reph Unicode char (U+094D U+0930) or (U+0930 U+094D) needs to be carefully mapped.
+            // kruti dev uses 'Z' after the base character.
+            [/र्([क-ह])/g, '$1Z'], // Handles most reph cases (e.g., कर्म -> deZ)
+            [/र्([ा-ौ])/g, '$1Z'], // Handles reph with matras (e.g., वर्षा -> o"kkZ)
+
+            // Special Unicode characters that map to specific Kruti Dev codes
+            [/ॐ/g, 'Aks'], // Om
+            [/₹/g, 'ª'], // Rupee symbol
+        ];
+
+        for (const [pattern, replacement] of complexConjuncts) {
+            krutiDevText = krutiDevText.replace(pattern, replacement);
+        }
+
+        // --- Step 3: Map remaining Basic Consonants, Vowels, Matras, Numbers, and Punctuation ---
+        // This is the core mapping. Ensure accurate Kruti Dev 010 mappings.
+
+        const characterMap = {
+            'अ': 'v', 'आ': 'vk', 'इ': 'b', 'ई': 'bZ', 'उ': 'm', 'ऊ': 'Å', 'ए': ',', 'ऐ': '_',
+            'ओ': 'vks', 'औ': 'vkS', 'अं': 'va', 'अः': 'v%', 'ऋ': '_.',
+
+            'क': 'd', 'ख': '[k', 'ग': 'x', 'घ': '?k', 'ङ': '³',
+            'च': 'p', 'छ': 'N', 'ज': 't', 'झ': '÷', 'ञ': '=',
+            'ट': 'V', 'ठ': 'B', 'ड': 'M', 'ढ': '<', 'ण': '.',
+            'त': 'r', 'थ': 'Fk', 'द': 'n', 'ध': '/k', 'न': 'u',
+            'प': 'i', 'फ': 'Q', 'ब': 'c', 'भ': 'Hk', 'म': 'e',
+            'य': ';', 'र': 'j', 'ल': 'y', 'व': 'o',
+            'श': "'k", 'ष': '"k', 'स': 'l', 'ह': 'g',
+
+            // Matras (after reordering, these simple mappings can be applied)
+            'ा': 'k', 'ु': 'q', 'ू': 'w', 'े': 's', 'ै': 'S', 'ो': 'ks', 'ौ': 'kS', // 'f' and 'h' are already handled via reordering
+            'ं': 'a', 'ः': '%', 'ँ': 'Z', // Anuswar, Visarg, Chandrabindu
+
+            // Digits
+            '०': '0', '१': '1', '२': '2', '३': '3', '४': '4', '५': '5', '६': '6', '७': '7', '८': '8', '९': '9',
+
+            // Punctuation and others
+            '।': '.', // Devanagari Danda
+            ' ': ' ', // Space
+            '\n': '\n', // Newline
+            '\r': '\r', // Carriage return
+            '\t': '\t', // Tab
+            ',': ',', ':': ':', ';': ';', '?': '?', '!': '!', '-': '-', '(': '(', ')': ')',
+            '[': '[', ']': ']', '{': '{', '}': '}', '<': '<', '>': '>', '=': '=', '+': '+',
+            '*': '*', '/': '/', '\\': '\\', '&': '&', '@': '@', '#': '#', '$': '$', '%': '%',
+            '^': '^', '_': '_', '|': '|', '~': '~', '`': '`', '"': '"', "'": "'",
+            // Add any other specific characters you might encounter
+        };
+
+        let tempText = '';
+        for (let i = 0; i < krutiDevText.length; i++) {
+            const char = krutiDevText[i];
+            // Check for Unicode Halant (U+094D) and handle it
+            // In Kruti Dev, halant often implies a conjunct or is removed.
+            // This is a complex area and often handled by specific conjunct rules.
+            if (char === '\u094D') { // Unicode Halant character
+                // If halant remains, it often indicates a half character.
+                // In Kruti Dev, half characters are often formed by specific key combinations.
+                // Or, if a character is followed by halant, it might need to be explicitly mapped.
+                // For a basic mapping, we might remove it if it's not part of a handled conjunct.
+                // Or map it to something if it has a direct Kruti Dev equivalent for standalone halant.
+                // For now, let's try to remove it if not part of a specific conjunct handled above.
+                continue; // Skip halant if not part of a pre-defined conjunct
+            }
+            tempText += characterMap[char] || char; // Use mapped character or original if not found
+        }
+        krutiDevText = tempText;
+
+        // --- Step 4: Post-processing for any remaining issues or special Kruti Dev rules ---
+        // This step can involve handling any characters that appear incorrectly after the main mapping.
+        // For example, if 'Z' for reph caused issues, or if any specific combinations are still wrong.
+        // This is often highly specific to Kruti Dev's rendering quirks.
+
+        // Example: Sometimes 'ं' (anuswar) needs to be handled differently based on context.
+        // If 'ं' is after a vowel, it's 'a'. If after a consonant it might be different.
+        // This code uses 'a' which is a common mapping.
+
+        return krutiDevText;
     }
-  </script>
-
-</body>
-</html>
+</script>
