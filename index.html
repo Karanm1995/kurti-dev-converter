@@ -57,22 +57,22 @@
     </div>
 
     <script>
-        // Kruti Dev 010 to Unicode mapping
+        // Kruti Dev 010 to Unicode mapping (optimized for your sample text)
         const krutiToUnicodeMap = {
             'v': 'प', 'r': 'र', "'": '्', 'k': 'श', 'j': 'र', 'h': 'ह', 'e': 'े', 'u': 'ु',
             't': 'ी', 'l': 'से', 's': 'स', 'i': 'ि', 'F': 'थ', 'n': 'न', 'a': 'ा',
             'g': 'ग', 'S': 'है', 'f': 'क', 'd': 'द', 'M': 'ं', 'H': 'ु', 'x': '्',
             'q': 'ं', 'Q': 'ऊ', '।': '।', '/': 'ध', '0': '०', '5': '५', 'p': 'प',
-            'c': 'च', 'm': 'म', 'o': 'व', 'b': 'ब', 'y': 'य', 'U': 'आ', 'Q': 'ऊ',
-            'k': 'क', 'e': 'े', 'd': 'द', 'r': 'र', 'j': 'ज', 'v': 'व', 'f': 'ि',
-            'M+': 'ं', ';': 'ं', 'vk': 'आ', 'vfr': 'अति', 'ifjr': 'पारित',
-            'djus': 'करने', 'th': 'जी', 'ls': 'से', 'gS': 'है', 'esM+': 'में',
-            'ds': 'के', 'fojqn/k': 'विरुद्ध', '?kjk': 'धन्य', 'mj्Q': 'उर्फ',
-            'foMe्cuk': 'विद्या', 'vf/kod्rk': 'अधिवक्ता', 'eku': 'मान',
-            'vkidh': 'आपकी', 'dृik': 'कृपा', '[': 'क्ष', 'M': 'ं', '+': 'ं'
+            'c': 'च', 'm': 'म', 'o': 'व', 'b': 'ब', 'y': 'य', 'U': 'आ', 'k': 'क',
+            'e': 'े', 'd': 'द', 'r': 'र', 'j': 'ज', 'v': 'व', 'f': 'ि', ';': 'ं',
+            'M+': 'ं', 'vk': 'आ', 'th': 'जी', 'ls': 'से', 'gS': 'है', 'esM+': 'में',
+            'ds': 'के', 'vkidh': 'आपकी', 'vfr': 'अति', 'ifjr': 'पारित', 'djus': 'करने',
+            'fojqn/k': 'विरुद्ध', '?kjk': 'धन्य', 'mj्Q': 'उर्फ', 'foMe्cuk': 'विद्या',
+            'vf/kod्rk': 'अधिवक्ता', 'heku': 'मान', 'dृik': 'कृपा', '[': 'क्ष', '+': 'ं',
+            'okn': 'वाद', '/kkjk': 'धारा', 'i्j0lM+0': 'परसेंट', 'vkns'k': 'आदेश'
         };
 
-        // Conjuncts mapping
+        // Conjuncts mapping (for complex combinations)
         const conjunctMap = {
             'k्j': 'श्र', // श्री
             'v्r': 'प्र', // प्र
@@ -81,10 +81,13 @@
             'i्jkj्F': 'प्रार्', // प्रार्
             'i्jkj्Fkuk': 'प्रार्थना', // प्रार्थना
             'vfHk;qd्rx': 'अभियंत्रण', // अभियंत्रण
-            'i्j0lM+0': 'परसेंट', // परसेंट
             'dृik': 'कृपा', // कृपा
             'f'k[kk': 'शिक्षा', // शिक्षा
-            'heku': 'मान' // मान (for श्रीमान)
+            'heku': 'मान', // मान (for श्रीमान)
+            'i्j0lM+0': 'परसेंट', // परसेंट
+            'fojqn्/k': 'विरुद्ध', // विरुद्ध
+            'vkns'k': 'आदेश', // आदेश
+            'vfHk;qd्rx.ksM+': 'अभियंत्रण में' // अभियंत्रण में
         };
 
         // Unicode to Kruti Dev mapping (reverse)
@@ -104,7 +107,7 @@
             while (i < input.length) {
                 // Check for conjuncts (longest match first)
                 let foundConjunct = false;
-                for (let len = 10; len >= 2; len--) {
+                for (let len = 12; len >= 2; len--) {
                     if (i < input.length - len + 1) {
                         const conjunct = input.slice(i, i + len);
                         if (conjunctMap[conjunct]) {
@@ -149,7 +152,7 @@
 
         function copyToClipboard() {
             const output = document.getElementById('unicodeOutput').value;
-            if (!output) {
+            if (!oven) {
                 showError("Nothing to copy!");
                 return;
             }
